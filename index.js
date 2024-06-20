@@ -1,3 +1,4 @@
+let arrNhanVien = [];
 // lấy nhân viên
 const layThongTinNhanVien = () => {
   let arrField = document.querySelectorAll("#formQLNV input, #formQLNV select");
@@ -41,18 +42,22 @@ function renderAllNhanVien(arr) {
     }
 
     content += `
-    <tr>
+    <tr id='${account}'>
     <td>${account}</td>
     <td>${name}</td>
     <td>${email}</td>
     <td>${datepicker}</td>
     <td>${tenChucVu}</td>
     <td>${tong}</td>
-   
+    <td>${xepLoaiNhanVien(gioLam)}</td>
     
-    <td>
-      <button class='btn btn-danger' onclick="deleteSinhVien(${nhanVien.account})">Xoá</button>
-      <button class='btn btn-warning' onclick="editSinhVien(${nhanVien.account})">Sửa</button>
+    <td >
+      <button  class='btn btn-danger ' onclick="deleteNhanVien('${
+        nhanVien.account
+      }')">Xoá</button>
+      <button class='btn btn-warning' onclick="editNhanVien(${
+        nhanVien.account
+      })">Sửa</button>
     </td>
   </tr>
     `;
@@ -67,5 +72,41 @@ function addNhanvien(event) {
   arr.push(nhanVien);
   let content = renderAllNhanVien(arr);
   let tableBody = document.getElementById("tableDanhSach");
-  tableBody.innerHTML = content;
+  tableBody.innerHTML += content;
+}
+
+//Xếp loại nhân viên
+function xepLoaiNhanVien(giolam) {
+  let xepLoai = "";
+  if (giolam >= 192) {
+    xepLoai = "Nhân viên xuất sắc";
+  } else if (giolam >= 176) {
+    xepLoai = "Nhân viên giỏi";
+  } else if (giolam >= 160) {
+    xepLoai = "Nhân viên khá";
+  } else {
+    xepLoai = "Nhân viên trung bình";
+  }
+  return xepLoai;
+}
+
+// Validation
+
+//Chức năng xoá
+function deleteNhanVien(account) {
+  let nhanVien = document.getElementById(account);
+  nhanVien.remove();
+}
+// chức năng search
+function searchNhanVien(event) {
+  let newKeyWord = removeVietnameseTones(
+    event.target.value.toLowerCase().trim()
+  );
+  let arrSearchNhanVien = arrNhanVien.filter((item, index) => {
+    // format lại dữ liệu của tên sinh viên
+    let newTenNhanVien = removeVietnameseTones(
+      item.txtTenSV.toLowerCase().trim()
+    ); // "Quang Khải" ==> "z" ==> false
+    return newTenNhanVien.includes(newKeyWord);
+  });
 }
